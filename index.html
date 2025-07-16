@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Malla Química y Farmacia - UV</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 30px;
+    }
+
+    .grid {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .semester {
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      width: 250px;
+    }
+
+    .semester h2 {
+      text-align: center;
+      color: #2980b9;
+      font-size: 1.1em;
+      margin-bottom: 10px;
+    }
+
+    .course {
+      padding: 10px;
+      margin: 6px 0;
+      background-color: #e3f2fd;
+      border-left: 5px solid #64b5f6;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+    }
+
+    .course:hover {
+      background-color: #d0e8fd;
+    }
+
+    .course.completed {
+      background-color: #c8e6c9;
+      border-color: #388e3c;
+      text-decoration: line-through;
+      color: #444;
+    }
+
+    .course.locked {
+      background-color: #f0f0f0;
+      border-color: #aaa;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    .course.locked::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      background: #555;
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      white-space: nowrap;
+      display: none;
+    }
+
+    .course.locked:hover::after {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <h1>Malla Química y Farmacia - UV</h1>
+  <div class="grid">
+    <div class="semester" id="sem1">
+      <h2>Semestre 1</h2>
+      <div class="course" data-id="quimica_general">Química General</div>
+      <div class="course" data-id="matematicas">Matemáticas</div>
+      <div class="course" data-id="biologia_celular">Biología Celular</div>
+      <div class="course" data-id="intro_lab">Introducción al Laboratorio</div>
+      <div class="course" data-id="intro_qf">Introducción a la Química y Farmacia</div>
+      <div class="course" data-id="anatomia">Anatomía</div>
+    </div>
+
+    <div class="semester" id="sem2">
+      <h2>Semestre 2</h2>
+      <div class="course" data-id="organica_i" data-prereq="quimica_general,intro_lab">Química Orgánica I</div>
+      <div class="course" data-id="fisicoquimica" data-prereq="quimica_general,matematicas">Físico Química</div>
+      <div class="course" data-id="calculo" data-prereq="matematicas">Cálculo</div>
+      <div class="course" data-id="botanica" data-prereq="biologia_molecular">Botánica</div>
+      <div class="course" data-id="bioestadistica" data-prereq="matematicas">Bioestadística</div>
+      <div class="course" data-id="lengua_materna">Taller Nivelación Lengua Materna</div>
+    </div>
+  </div>
+
+  <script>
+    const courses = document.querySelectorAll('.course');
+    const state = JSON.parse(localStorage.getItem('curso_estado') || '{}');
+
+    const prerequisites = {};
+
+    courses.forEach(course => {
+      const id = course.dataset.id;
+      const prereq = course.dataset.prereq ? course.dataset.prereq.split(',') : [];
+      prerequisites[id] = prereq;
+
+      if (state[id]) {
+        course.classList.add('completed');
+      }
+    });
+
+    function updateLockStatus() {
+      courses.forEach(course => {
+        const id = course.dataset.id;
+        const prereq = prerequisites[id];
+
+        if (prereq.length === 0) {
+          course.classList.remove('locked');
+          course.removeAttribute('data-tooltip');
+          return;
+        }
+
+        const missing = prereq.filter(p => !state[p]);
+
+        if (missing.length > 0) {
+          course.classList.add('locked');
+          course.setAttribute('data-tooltip', 'Requiere: ' + missing.map(id => document.querySelector(`[data-id='${id}']`)?.textContent).join(', '));
+        } else {
+          course.classList.remove('locked');
+          course.removeAttribute('data-tooltip');
+        }
+      });
+    }
+
+    updateLockStatus();
+
+    courses.forEach(course => {
+      course.addEventListener('click', () => {
+        const id = course.dataset.id;
+        if (course.classList.contains('locked')) return;
+
+        course.classList.toggle('completed');
+        state[id] = course.classList.contains('completed');
+        localStorage.setItem('curso_estado', JSON.stringify(state));
+
+        updateLockStatus();
+      });
+    });
+  </script>
+</body>
+</html>

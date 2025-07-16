@@ -11,20 +11,17 @@
       padding: 20px;
       color: #333;
     }
-
     h1 {
       text-align: center;
       color: #2c3e50;
       margin-bottom: 30px;
     }
-
     .grid {
       display: flex;
+      flex-wrap: wrap;
       gap: 20px;
       justify-content: center;
-      flex-wrap: wrap;
     }
-
     .semester {
       background: #fff;
       padding: 15px;
@@ -32,14 +29,12 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       width: 250px;
     }
-
     .semester h2 {
       text-align: center;
       color: #2980b9;
       font-size: 1.1em;
       margin-bottom: 10px;
     }
-
     .course {
       padding: 10px;
       margin: 6px 0;
@@ -50,25 +45,21 @@
       transition: background 0.2s;
       position: relative;
     }
-
     .course:hover {
       background-color: #d0e8fd;
     }
-
     .course.completed {
       background-color: #c8e6c9;
       border-color: #388e3c;
       text-decoration: line-through;
       color: #444;
     }
-
     .course.locked {
       background-color: #f0f0f0;
       border-color: #aaa;
       color: #aaa;
       cursor: not-allowed;
     }
-
     .course.locked::after {
       content: attr(data-tooltip);
       position: absolute;
@@ -82,7 +73,6 @@
       white-space: nowrap;
       display: none;
     }
-
     .course.locked:hover::after {
       display: block;
     }
@@ -90,81 +80,150 @@
 </head>
 <body>
   <h1>Malla Química y Farmacia - UV</h1>
-  <div class="grid">
-    <div class="semester" id="sem1">
-      <h2>Semestre 1</h2>
-      <div class="course" data-id="quimica_general">Química General</div>
-      <div class="course" data-id="matematicas">Matemáticas</div>
-      <div class="course" data-id="biologia_celular">Biología Celular</div>
-      <div class="course" data-id="intro_lab">Introducción al Laboratorio</div>
-      <div class="course" data-id="intro_qf">Introducción a la Química y Farmacia</div>
-      <div class="course" data-id="anatomia">Anatomía</div>
-    </div>
-
-    <div class="semester" id="sem2">
-      <h2>Semestre 2</h2>
-      <div class="course" data-id="organica_i" data-prereq="quimica_general,intro_lab">Química Orgánica I</div>
-      <div class="course" data-id="fisicoquimica" data-prereq="quimica_general,matematicas">Físico Química</div>
-      <div class="course" data-id="calculo" data-prereq="matematicas">Cálculo</div>
-      <div class="course" data-id="botanica" data-prereq="biologia_molecular">Botánica</div>
-      <div class="course" data-id="bioestadistica" data-prereq="matematicas">Bioestadística</div>
-      <div class="course" data-id="lengua_materna">Taller Nivelación Lengua Materna</div>
-    </div>
-  </div>
-
+  <div class="grid" id="malla"></div>
   <script>
-    const courses = document.querySelectorAll('.course');
-    const state = JSON.parse(localStorage.getItem('curso_estado') || '{}');
+    const data = {
+  "Semestre 1": {
+    "quimica_general": "Química General",
+    "matematicas": "Matemáticas",
+    "biologia_celular": "Biología Celular",
+    "intro_lab": "Introducción al Laboratorio",
+    "intro_qf": "Introducción a la Química y Farmacia",
+    "anatomia": "Anatomía"
+  },
+  "Semestre 2": {
+    "organica_i|quimica_general,intro_lab": "Química Orgánica I",
+    "fisicoquimica|quimica_general,matematicas": "Físico Química",
+    "calculo|matematicas": "Cálculo",
+    "botanica|biologia_celular": "Botánica",
+    "bioestadistica|matematicas": "Bioestadística",
+    "lengua_materna": "Taller Nivelación Lengua Materna"
+  },
+  "Semestre 3": {
+    "organica_ii|organica_i": "Química Orgánica II",
+    "analitica|fisicoquimica": "Química Analítica",
+    "fisiologia_i|biologia_celular,anatomia": "Fisiología I",
+    "ingles": "Taller de Nivelación Inglés",
+    "bioquimica|biologia_celular,organica_i": "Bioquímica"
+  },
+  "Semestre 4": {
+    "farmacognosia|botanica,organica_ii": "Farmacognosia",
+    "instrumental|analitica": "Análisis Instrumental",
+    "operaciones|fisicoquimica": "Operaciones Unitarias",
+    "fisiologia_ii|fisiologia_i": "Fisiología II",
+    "admin_org|matematicas,lengua_materna": "Administración de Organizaciones",
+    "intro_qfarm|organica_ii": "Introducción a la Química Farmacéutica"
+  },
+  "Semestre 5": {
+    "etica|lengua_materna": "Ética",
+    "admin_rrhh|admin_org": "Administración de Recursos Humanos",
+    "biologia_molecular|bioquimica": "Biología Molecular",
+    "fisiopato|fisiologia_ii": "Fisiopatología",
+    "qf_i|fisiologia_ii,intro_qfarm": "Química Farmacéutica I",
+    "electiva_1": "Asignatura Electiva Profesional",
+    "microbiologia|bioquimica": "Microbiología",
+    "legislacion|admin_org": "Legislación Farmacéutica"
+  },
+  "Semestre 6": {
+    "biofarmacia|instrumental,fisiologia_ii": "Biofarmacia",
+    "farmaco_i|fisiopato,qf_i": "Farmacología I",
+    "inmunologia|biologia_molecular,fisiopato": "Inmunología",
+    "qf_ii|qf_i,microbiologia": "Química Farmacéutica II",
+    "pp1|etica,admin_rrhh,legislacion": "Práctica Profesional Farmacia I"
+  },
+  "Semestre 7": {
+    "tecno_i|operaciones,biofarmacia": "Tecnología Farmacéutica I",
+    "farmaco_ii|farmaco_i": "Farmacología II",
+    "qfp|inmunologia": "Química Fisiológica y Patológica",
+    "salud_pub|bioestadistica,etica": "Salud Pública y Epidemiología",
+    "alim|instrumental": "Química de Alimentos",
+    "perfil_egreso_i|farmaco_i,pp1": "Taller Integración Perfil de Egreso I"
+  },
+  "Semestre 8": {
+    "tecno_ii|tecno_i": "Tecnología Farmacéutica II",
+    "asistencial|admin_rrhh,farmaco_ii": "Farmacia Asistencial",
+    "investigacion": "Metodología de la Investigación",
+    "nutricion|qfp,alim": "Nutrición",
+    "gestion_calidad|legislacion,tecno_i": "Gestión de Calidad",
+    "bioq_clinica|qfp": "Bioquímica Clínica",
+    "seminario|tecno_i,farmaco_ii,qfp,salud_pub,alim,perfil_egreso_i": "Seminario de Licenciatura",
+    "perfil_egreso_ii|perfil_egreso_i": "Taller Integración Perfil de Egreso II"
+  },
+  "Semestre 9": {
+    "clinica_i|farmaco_ii,bioq_clinica": "Farmacia Clínica I",
+    "cosmetica|tecno_ii": "Cosmética",
+    "toxico|farmaco_ii": "Toxicología",
+    "gestion_com|admin_rrhh": "Gestión Comercial",
+    "med_comp|farmaco_ii,nutricion": "Medicamentos Complementarios",
+    "pp2|pp1,farmaco_ii": "Práctica Profesional II",
+    "perfil_egreso_iii|perfil_egreso_ii": "Taller Integración Perfil de Egreso III"
+  },
+  "Semestre 10": {
+    "electiva_2": "Asignatura Electiva Profesional",
+    "clinica_ii|clinica_i": "Farmacia Clínica II",
+    "unidad_i|investigacion,seminario": "Unidad de Investigación I / Internado I",
+    "pp3|instrumental,alim,tecno_ii,asistencial,bioq_clinica,toxico": "Práctica Profesional III"
+  },
+  "Semestre 11": {
+    "unidad_ii|unidad_i": "Unidad de Investigación II / Internado II"
+  }
+};
 
-    const prerequisites = {};
+const container = document.getElementById('malla');
+const state = JSON.parse(localStorage.getItem('curso_estado') || '{}');
+const prereqMap = {};
 
-    courses.forEach(course => {
-      const id = course.dataset.id;
-      const prereq = course.dataset.prereq ? course.dataset.prereq.split(',') : [];
-      prerequisites[id] = prereq;
+for (const [sem, cursos] of Object.entries(data)) {
+  const col = document.createElement('div');
+  col.className = 'semester';
+  col.innerHTML = `<h2>${sem}</h2>`;
+  for (const [idFull, nombre] of Object.entries(cursos)) {
+    const [id, reqs] = idFull.split('|');
+    const div = document.createElement('div');
+    div.className = 'course';
+    div.dataset.id = id;
+    if (reqs) div.dataset.prereq = reqs;
+    div.textContent = nombre;
+    if (state[id]) div.classList.add('completed');
+    prereqMap[id] = reqs ? reqs.split(',') : [];
+    col.appendChild(div);
+  }
+  container.appendChild(col);
+}
 
-      if (state[id]) {
-        course.classList.add('completed');
-      }
-    });
-
-    function updateLockStatus() {
-      courses.forEach(course => {
-        const id = course.dataset.id;
-        const prereq = prerequisites[id];
-
-        if (prereq.length === 0) {
-          course.classList.remove('locked');
-          course.removeAttribute('data-tooltip');
-          return;
-        }
-
-        const missing = prereq.filter(p => !state[p]);
-
-        if (missing.length > 0) {
-          course.classList.add('locked');
-          course.setAttribute('data-tooltip', 'Requiere: ' + missing.map(id => document.querySelector(`[data-id='${id}']`)?.textContent).join(', '));
-        } else {
-          course.classList.remove('locked');
-          course.removeAttribute('data-tooltip');
-        }
-      });
+function updateLocks() {
+  document.querySelectorAll('.course').forEach(el => {
+    const id = el.dataset.id;
+    const reqs = prereqMap[id];
+    if (!reqs || reqs.length === 0) {
+      el.classList.remove('locked');
+      el.removeAttribute('data-tooltip');
+      return;
     }
+    const missing = reqs.filter(r => !state[r]);
+    if (missing.length > 0) {
+      el.classList.add('locked');
+      el.setAttribute('data-tooltip', 'Requiere: ' + missing.map(r => document.querySelector(`[data-id='${r}']`)?.textContent).join(', '));
+    } else {
+      el.classList.remove('locked');
+      el.removeAttribute('data-tooltip');
+    }
+  });
+}
 
-    updateLockStatus();
+updateLocks();
 
-    courses.forEach(course => {
-      course.addEventListener('click', () => {
-        const id = course.dataset.id;
-        if (course.classList.contains('locked')) return;
-
-        course.classList.toggle('completed');
-        state[id] = course.classList.contains('completed');
-        localStorage.setItem('curso_estado', JSON.stringify(state));
-
-        updateLockStatus();
-      });
-    });
+document.querySelectorAll('.course').forEach(el => {
+  el.addEventListener('click', () => {
+    const id = el.dataset.id;
+    if (el.classList.contains('locked')) return;
+    el.classList.toggle('completed');
+    state[id] = el.classList.contains('completed');
+    localStorage.setItem('curso_estado', JSON.stringify(state));
+    updateLocks();
+  });
+});
   </script>
 </body>
 </html>
+

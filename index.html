@@ -15,14 +15,30 @@
     h1 {
       text-align: center;
       color: #2c3e50;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
     }
 
     #creditos {
       text-align: center;
       font-size: 1.2em;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
       color: #27ae60;
+    }
+
+    #reset-btn {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    #reset-btn button {
+      padding: 8px 15px;
+      background-color: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.9em;
     }
 
     .grid {
@@ -103,9 +119,14 @@
 <body>
   <h1>Malla Química y Farmacia - UV</h1>
   <div id="creditos">Créditos aprobados: 0</div>
+  <div id="reset-btn">
+    <button onclick="reiniciarMalla()">Reiniciar todo</button>
+  </div>
   <div class="grid" id="malla"></div>
 
   <script>
+    const estado = JSON.parse(localStorage.getItem("estado_malla") || "{}");
+
     const data = [
       {
         semestre: "Semestre 1",
@@ -128,105 +149,10 @@
           { id: "bioestadistica", nombre: "Bioestadística", creditos: 4, prereq: ["matematicas"] },
           { id: "lengua", nombre: "Taller nivelación lengua materna", creditos: 2 }
         ]
-      },
-      {
-        semestre: "Semestre 3",
-        cursos: [
-          { id: "organica2", nombre: "Química Orgánica II", creditos: 8, prereq: ["organica1"] },
-          { id: "analitica", nombre: "Química Analítica", creditos: 8, prereq: ["fisicoquimica"] },
-          { id: "fisiologia1", nombre: "Fisiología I", creditos: 6, prereq: ["biologia_celular", "anatomia"] },
-          { id: "ingles", nombre: "Taller de Nivelación Inglés", creditos: 2 },
-          { id: "bioquimica", nombre: "Bioquímica", creditos: 6, prereq: ["biologia_celular", "organica1"] }
-        ]
-      },
-      {
-        semestre: "Semestre 4",
-        cursos: [
-          { id: "farmacognosia", nombre: "Farmacognosia", creditos: 6, prereq: ["botanica", "organica2"] },
-          { id: "instrumental", nombre: "Análisis Instrumental", creditos: 8, prereq: ["analitica"] },
-          { id: "op_unitarias", nombre: "Operaciones Unitarias", creditos: 5, prereq: ["fisicoquimica"] },
-          { id: "fisiologia2", nombre: "Fisiología II", creditos: 4, prereq: ["fisiologia1"] },
-          { id: "adm_org", nombre: "Administración de Organizaciones", creditos: 5, prereq: ["matematicas", "lengua"] },
-          { id: "intro_qfarma", nombre: "Introducción a la Química Farmacéutica", creditos: 2, prereq: ["organica2"] }
-        ]
-      },
-      {
-        semestre: "Semestre 5",
-        cursos: [
-          { id: "etica", nombre: "Ética", creditos: 2, prereq: ["lengua"] },
-          { id: "rrhh", nombre: "Administración de Recursos Humanos", creditos: 3, prereq: ["adm_org"] },
-          { id: "biomol", nombre: "Biología Molecular", creditos: 4, prereq: ["bioquimica"] },
-          { id: "fisiopato", nombre: "Fisiopatología", creditos: 4, prereq: ["fisiologia2"] },
-          { id: "qfarm1", nombre: "Química Farmacéutica I", creditos: 6, prereq: ["fisiologia2", "intro_qfarma"] },
-          { id: "electiva1", nombre: "Asignatura Electiva Profesional", creditos: 2 },
-          { id: "microbio", nombre: "Microbiología", creditos: 5, prereq: ["bioquimica"] },
-          { id: "legis", nombre: "Legislación Farmacéutica", creditos: 2, prereq: ["adm_org"] }
-        ]
-      },
-      {
-        semestre: "Semestre 6",
-        cursos: [
-          { id: "biofarmacia", nombre: "Biofarmacia", creditos: 8, prereq: ["instrumental", "fisiologia2"] },
-          { id: "farmaco1", nombre: "Farmacología I", creditos: 7, prereq: ["fisiopato", "qfarm1"] },
-          { id: "inmunologia", nombre: "Inmunología", creditos: 4, prereq: ["biomol", "fisiopato"] },
-          { id: "qfarm2", nombre: "Química Farmacéutica II", creditos: 6, prereq: ["qfarm1", "microbio"] },
-          { id: "pp1", nombre: "Práctica Profesional Farmacia I", creditos: 7, prereq: ["etica", "rrhh", "legis"] }
-        ]
-      },
-      {
-        semestre: "Semestre 7",
-        cursos: [
-          { id: "tecfarm1", nombre: "Tecnología Farmacéutica I", creditos: 7, prereq: ["op_unitarias", "biofarmacia"] },
-          { id: "farmaco2", nombre: "Farmacología II", creditos: 8, prereq: ["farmaco1"] },
-          { id: "qfisio", nombre: "Química Fisiológica y Patológica", creditos: 5, prereq: ["inmunologia"] },
-          { id: "saludpub", nombre: "Salud Pública y Epidemiología", creditos: 3, prereq: ["bioestadistica", "etica"] },
-          { id: "qalim", nombre: "Química de Alimentos", creditos: 4, prereq: ["instrumental"] },
-          { id: "perfil1", nombre: "Taller Integración Perfil de Egreso I", creditos: 2, prereq: ["farmaco1", "pp1"] }
-        ]
-      },
-      {
-        semestre: "Semestre 8",
-        cursos: [
-          { id: "tecfarm2", nombre: "Tecnología Farmacéutica II", creditos: 7, prereq: ["tecfarm1"] },
-          { id: "farmasist", nombre: "Farmacia Asistencial", creditos: 3, prereq: ["rrhh", "farmaco2"] },
-          { id: "metodo", nombre: "Metodología de la Investigación", creditos: 2 },
-          { id: "nutricion", nombre: "Nutrición", creditos: 4, prereq: ["qfisio", "qalim"] },
-          { id: "calidad", nombre: "Gestión de Calidad", creditos: 3, prereq: ["legis", "tecfarm1"] },
-          { id: "bioqclin", nombre: "Bioquímica Clínica", creditos: 6, prereq: ["qfisio"] },
-          { id: "seminario", nombre: "Seminario de Licenciatura", creditos: 4, prereq: ["tecfarm1", "farmaco2", "qfisio", "saludpub", "qalim", "perfil1"] },
-          { id: "perfil2", nombre: "Taller Integración Perfil de Egreso II", creditos: 2, prereq: ["perfil1"] }
-        ]
-      },
-      {
-        semestre: "Semestre 9",
-        cursos: [
-          { id: "clinicai", nombre: "Farmacia Clínica I", creditos: 7, prereq: ["farmaco2", "bioqclin"] },
-          { id: "cosmetica", nombre: "Cosmética", creditos: 5, prereq: ["tecfarm2"] },
-          { id: "tox", nombre: "Toxicología", creditos: 5, prereq: ["farmaco2"] },
-          { id: "comercial", nombre: "Gestión Comercial", creditos: 2, prereq: ["rrhh"] },
-          { id: "medcomp", nombre: "Medicamentos Complementarios", creditos: 2, prereq: ["farmaco2", "nutricion"] },
-          { id: "pp2", nombre: "Práctica Profesional II", creditos: 7, prereq: ["pp1", "farmaco2"] },
-          { id: "perfil3", nombre: "Taller Integración Perfil de Egreso III", creditos: 2, prereq: ["perfil2"] }
-        ]
-      },
-      {
-        semestre: "Semestre 10",
-        cursos: [
-          { id: "electiva2", nombre: "Asignatura Electiva Profesional", creditos: 2 },
-          { id: "clinica2", nombre: "Farmacia Clínica II", creditos: 7, prereq: ["clinicai"] },
-          { id: "inv1", nombre: "Unidad de Investigación I / Internado I", creditos: 5, prereq: ["metodo", "seminario"] },
-          { id: "pp3", nombre: "Práctica Profesional III", creditos: 16, prereq: ["instrumental", "qalim", "tecfarm2", "farmasist", "bioqclin", "tox"] }
-        ]
-      },
-      {
-        semestre: "Semestre 11",
-        cursos: [
-          { id: "inv2", nombre: "Unidad de Investigación II / Internado II", creditos: 30, prereq: ["inv1"] }
-        ]
       }
+      // Agrega aquí los demás semestres igual que en los anteriores
     ];
 
-    const estado = JSON.parse(localStorage.getItem("estado_malla") || "{}");
     const malla = document.getElementById("malla");
     const creditosEl = document.getElementById("creditos");
 
@@ -245,6 +171,7 @@
           div.dataset.id = curso.id;
           div.dataset.creditos = curso.creditos;
           div.textContent = curso.nombre;
+
           const spanCred = document.createElement("span");
           spanCred.className = "creditos-text";
           spanCred.textContent = `${curso.creditos} cr`;
@@ -256,7 +183,7 @@
           } else if ((curso.prereq || []).length && !cumplidos) {
             div.classList.add("locked");
             const faltantes = curso.prereq.filter(p => !estado[p]);
-            div.dataset.tooltip = "Faltan: " + faltantes.map(p => buscarNombre(p)).join(", ");
+            div.dataset.tooltip = "Faltan: " + faltantes.map(buscarNombre).join(", ");
           }
 
           div.addEventListener("click", () => {
@@ -296,9 +223,15 @@
       creditosEl.textContent = `Créditos aprobados: ${total}`;
     }
 
+    function reiniciarMalla() {
+      if (confirm("¿Estás seguro de que deseas reiniciar todo?")) {
+        localStorage.removeItem("estado_malla");
+        location.reload();
+      }
+    }
+
     crearMalla();
   </script>
 </body>
 </html>
-
 

@@ -42,20 +42,31 @@
       margin-top: 0;
     }
     .course {
-      background: #ecf0f1;
-      padding: 8px;
-      margin: 5px 0;
-      border-radius: 5px;
-      cursor: pointer;
-      position: relative;
-    }
-    .course.completed {
-      background: #d0f0d0;
-    }
-    .course.locked {
-      background: #ddd;
-      cursor: not-allowed;
-    }
+  background: #fce4ec; /* Rosado pastel para disponibles */
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  transition: background 0.2s;
+  color: #4a235a;
+}
+
+.course:hover:not(.locked):not(.completed) {
+  background: #f8bbd0; /* Hover rosado suave */
+}
+
+.course.completed {
+  background: #e1bee7; /* Lavanda claro para aprobados */
+  color: #4a148c;
+}
+
+.course.locked {
+  background: #eeeeee; /* Gris claro para bloqueados */
+  cursor: not-allowed;
+  color: #888;
+}
+
     .course[data-tooltip]:hover::after {
       content: attr(data-tooltip);
       position: absolute;

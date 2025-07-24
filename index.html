@@ -123,34 +123,127 @@
     <button onclick="reiniciarMalla()">Reiniciar todo</button>
   </div>
   <div class="grid" id="malla"></div>
-
   <script>
-    const estado = JSON.parse(localStorage.getItem("estado_malla") || "{}");
+    const estado = JSON.parse(localStorage.getItem(\"estado_malla\") || \"{}\");
 
     const data = [
       {
-        semestre: "Semestre 1",
+        semestre: \"Semestre 1\",
         cursos: [
-          { id: "quimica_general", nombre: "Química General", creditos: 4 },
-          { id: "matematicas", nombre: "Matemáticas", creditos: 8 },
-          { id: "biologia_celular", nombre: "Biología Celular", creditos: 6 },
-          { id: "intro_lab", nombre: "Introducción al Laboratorio", creditos: 3 },
-          { id: "intro_qf", nombre: "Introducción a la Química y Farmacia", creditos: 6 },
-          { id: "anatomia", nombre: "Anatomía", creditos: 3 }
+          { id: \"quimica_general\", nombre: \"Química General\", creditos: 4 },
+          { id: \"matematicas\", nombre: \"Matemáticas\", creditos: 8 },
+          { id: \"biologia_celular\", nombre: \"Biología Celular\", creditos: 6 },
+          { id: \"intro_lab\", nombre: \"Introducción al Laboratorio\", creditos: 3 },
+          { id: \"intro_qf\", nombre: \"Introducción a la Química y Farmacia\", creditos: 6 },
+          { id: \"anatomia\", nombre: \"Anatomía\", creditos: 3 }
         ]
       },
       {
-        semestre: "Semestre 2",
+        semestre: \"Semestre 2\",
         cursos: [
-          { id: "organica1", nombre: "Química Orgánica I", creditos: 6, prereq: ["quimica_general", "intro_lab"] },
-          { id: "fisicoquimica", nombre: "Físico Química", creditos: 8, prereq: ["quimica_general", "matematicas"] },
-          { id: "calculo", nombre: "Cálculo", creditos: 4, prereq: ["matematicas"] },
-          { id: "botanica", nombre: "Botánica", creditos: 6, prereq: ["biologia_celular"] },
-          { id: "bioestadistica", nombre: "Bioestadística", creditos: 4, prereq: ["matematicas"] },
-          { id: "lengua", nombre: "Taller nivelación lengua materna", creditos: 2 }
+          { id: \"organica1\", nombre: \"Química Orgánica I\", creditos: 6, prereq: [\"quimica_general\", \"intro_lab\"] },
+          { id: \"fisicoquimica\", nombre: \"Físico Química\", creditos: 8, prereq: [\"quimica_general\", \"matematicas\"] },
+          { id: \"calculo\", nombre: \"Cálculo\", creditos: 4, prereq: [\"matematicas\"] },
+          { id: \"botanica\", nombre: \"Botánica\", creditos: 6, prereq: [\"biologia_celular\"] },
+          { id: \"bioestadistica\", nombre: \"Bioestadística\", creditos: 4, prereq: [\"matematicas\"] },
+          { id: \"lengua\", nombre: \"Taller nivelación lengua materna\", creditos: 2 }
+        ]
+      },
+      {
+        semestre: \"Semestre 3\",
+        cursos: [
+          { id: \"organica2\", nombre: \"Química Orgánica II\", creditos: 8, prereq: [\"organica1\"] },
+          { id: \"analitica\", nombre: \"Química Analítica\", creditos: 8, prereq: [\"fisicoquimica\"] },
+          { id: \"fisiologia1\", nombre: \"Fisiología I\", creditos: 6, prereq: [\"biologia_celular\", \"anatomia\"] },
+          { id: \"ingles\", nombre: \"Taller de Nivelación Inglés\", creditos: 2 },
+          { id: \"bioquimica\", nombre: \"Bioquímica\", creditos: 6, prereq: [\"biologia_celular\", \"organica1\"] }
+        ]
+      },
+      {
+        semestre: \"Semestre 4\",
+        cursos: [
+          { id: \"farmacognosia\", nombre: \"Farmacognosia\", creditos: 6, prereq: [\"botanica\", \"organica2\"] },
+          { id: \"instrumental\", nombre: \"Análisis Instrumental\", creditos: 8, prereq: [\"analitica\"] },
+          { id: \"op_unitarias\", nombre: \"Operaciones Unitarias\", creditos: 5, prereq: [\"fisicoquimica\"] },
+          { id: \"fisiologia2\", nombre: \"Fisiología II\", creditos: 4, prereq: [\"fisiologia1\"] },
+          { id: \"adm_org\", nombre: \"Administración de Organizaciones\", creditos: 5, prereq: [\"matematicas\", \"lengua\"] },
+          { id: \"intro_qfarma\", nombre: \"Introducción a la Química Farmacéutica\", creditos: 2, prereq: [\"organica2\"] }
+        ]
+      },
+      {
+        semestre: "Semestre 5",
+        cursos: [
+          { id: "etica", nombre: "Ética", creditos: 2, prereq: ["lengua"] },
+          { id: "rec_humanos", nombre: "Administración de Recursos Humanos", creditos: 3, prereq: ["adm_org"] },
+          { id: "biomolecular", nombre: "Biología Molecular", creditos: 4, prereq: ["bioquimica"] },
+          { id: "fisiopato", nombre: "Fisiopatología", creditos: 4, prereq: ["fisiologia2"] },
+          { id: "qf1", nombre: "Química Farmacéutica I", creditos: 6, prereq: ["fisiologia2", "intro_qfarma"] },
+          { id: "electiva1", nombre: "Asignatura Electiva Profesional", creditos: 2 },
+          { id: "microbiologia", nombre: "Microbiología", creditos: 5, prereq: ["bioquimica"] },
+          { id: "legislacion", nombre: "Legislación Farmacéutica", creditos: 2, prereq: ["adm_org"] }
+        ]
+      },
+      {
+        semestre: "Semestre 6",
+        cursos: [
+          { id: "biofarmacia", nombre: "Biofarmacia", creditos: 8, prereq: ["instrumental", "fisiologia2"] },
+          { id: "farmacologia1", nombre: "Farmacología I", creditos: 7, prereq: ["fisiopato", "qf1"] },
+          { id: "inmunologia", nombre: "Inmunología", creditos: 4, prereq: ["biomolecular", "fisiopato"] },
+          { id: "qf2", nombre: "Química Farmacéutica II", creditos: 6, prereq: ["qf1", "microbiologia"] },
+          { id: "pp1", nombre: "Práctica Profesional Farmacia I", creditos: 7, prereq: ["etica", "rec_humanos", "legislacion"] }
+        ]
+      },
+      {
+        semestre: "Semestre 7",
+        cursos: [
+          { id: "tecfarm1", nombre: "Tecnología Farmacéutica I", creditos: 7, prereq: ["op_unitarias", "biofarmacia"] },
+          { id: "farmacologia2", nombre: "Farmacología II", creditos: 8, prereq: ["farmacologia1"] },
+          { id: "qfp", nombre: "Química Fisiológica y Patológica", creditos: 5, prereq: ["inmunologia"] },
+          { id: "salud_pub", nombre: "Salud Pública y Epidemiología", creditos: 3, prereq: ["bioestadistica", "etica"] },
+          { id: "q_alimentos", nombre: "Química de Alimentos", creditos: 4, prereq: ["instrumental"] },
+          { id: "taller_egreso1", nombre: "Taller Integración Perfil de Egreso I", creditos: 2, prereq: ["farmacologia1", "pp1"] }
+        ]
+      },
+      {
+        semestre: "Semestre 8",
+        cursos: [
+          { id: "tecfarm2", nombre: "Tecnología Farmacéutica II", creditos: 7, prereq: ["tecfarm1"] },
+          { id: "farm_asist", nombre: "Farmacia Asistencial", creditos: 3, prereq: ["rec_humanos", "farmacologia2"] },
+          { id: "investigacion", nombre: "Metodología de la Investigación", creditos: 2 },
+          { id: "nutricion", nombre: "Nutrición", creditos: 4, prereq: ["qfp", "q_alimentos"] },
+          { id: "gestion_calidad", nombre: "Gestión de Calidad", creditos: 3, prereq: ["legislacion", "tecfarm1"] },
+          { id: "bioq_clinica", nombre: "Bioquímica Clínica", creditos: 6, prereq: ["qfp"] },
+          { id: "seminario", nombre: "Seminario de Licenciatura", creditos: 4, prereq: ["tecfarm1", "farmacologia2", "qfp", "salud_pub", "q_alimentos", "taller_egreso1"] },
+          { id: "taller_egreso2", nombre: "Taller Integración Perfil de Egreso II", creditos: 2, prereq: ["taller_egreso1"] }
+        ]
+      },
+      {
+        semestre: "Semestre 9",
+        cursos: [
+          { id: "farmaclinica1", nombre: "Farmacia Clínica I", creditos: 7, prereq: ["farmacologia2", "bioq_clinica"] },
+          { id: "cosmetica", nombre: "Cosmética", creditos: 5, prereq: ["tecfarm2"] },
+          { id: "toxicologia", nombre: "Toxicología", creditos: 5, prereq: ["farmacologia2"] },
+          { id: "gestion_com", nombre: "Gestión Comercial", creditos: 2, prereq: ["rec_humanos"] },
+          { id: "medicamentos_comp", nombre: "Medicamentos Complementarios", creditos: 2, prereq: ["farmacologia2", "nutricion"] },
+          { id: "pp2", nombre: "Práctica Profesional II", creditos: 7, prereq: ["pp1", "farmacologia2"] },
+          { id: "taller_egreso3", nombre: "Taller Integración Perfil de Egreso III", creditos: 2, prereq: ["taller_egreso2"] }
+        ]
+      },
+      {
+        semestre: "Semestre 10",
+        cursos: [
+          { id: "electiva2", nombre: "Asignatura Electiva Profesional", creditos: 2 },
+          { id: "farmaclinica2", nombre: "Farmacia Clínica II", creditos: 7, prereq: ["farmaclinica1"] },
+          { id: "inv1", nombre: "Unidad de Investigación I / Internado I", creditos: 5, prereq: ["investigacion", "seminario"] },
+          { id: "pp3", nombre: "Práctica Profesional III", creditos: 16, prereq: ["instrumental", "q_alimentos", "tecfarm2", "farm_asist", "bioq_clinica", "toxicologia"] }
+        ]
+      },
+      {
+        semestre: "Semestre 11",
+        cursos: [
+          { id: "inv2", nombre: "Unidad de Investigación II / Internado II", creditos: 30, prereq: ["inv1"] }
         ]
       }
-      // Agrega aquí los demás semestres igual que en los anteriores
     ];
 
     const malla = document.getElementById("malla");
